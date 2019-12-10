@@ -49,9 +49,159 @@ int main()
 }
 ```
 输出结果为：
->偶数为：  
-2 4 6 8  
-奇数为  
+>偶数为：
+2 4 6 8
+奇数为
 1 3 5 7 9
 
 ---
+### 9.29 假定vec包含25个元素，那么vec.resize(100)会做什么？如果接下来调用vec.resize(10)会做什么？
+答：resize(100)会将vec的大小改变为100个元素的大小，添加新元素并且会默认初始化。接下来调用vec.resize(10)会将之后的90个元素舍弃，并且vec的大小变为10个元素的大小。
+
+---
+### 9.43 编写一个函数，接受三个string函数s、oldVal和newVal。使用迭代器及insert和erase函数将s中所有oldVal替换为newVal。测试你的程序，用它替换通用的简写形式，如，将"tho"替换为"though"，将"thru"替换为"through"。
+答：
+```
+#include <iostream>
+#include <string>
+
+void func(std::string &s, std::string &oldVal, std::string &newVal);
+int main()
+{
+    std::string s = "abcd thru through";
+    std::string oldval = "thru";
+    std::string newval = "through";
+    func(s, oldval, newval);
+    std::cout << s << std::endl;
+    return 0;
+}
+
+void func(std::string &s, std::string &oldVal, std::string &newVal)
+{
+    std::string::iterator it = s.begin();
+    while (it + oldVal.size() != s.end())
+    {
+        if (oldVal == std::string(it, it + oldVal.size()))
+        {
+            it = s.erase(it, it + oldVal.size());
+            it = s.insert(it, newVal.begin(), newVal.end());
+            std::advance(it ,newVal.size());
+        }
+        else
+        {
+            it++;
+        }
+    }
+}
+```
+运行结果为：
+>原语句："abcd thru through"
+运行后语句："abcd through throuth"
+
+---
+### 9.52 使用stack处理括号化的表达式。当你看到一个左括号，将其记录下来。当你在一个左括号之后看到一个右括号，从stack中pop对象，直到遇到左括号，将左括号也一起弹出栈。然后将一个值（括号内运算结果）push到栈中，表示一个括号化的（子）表达式已经处理完毕，被其运算结果所取代。
+答：
+```
+#include<iostream>
+#include<stack>
+#include<string>
+
+bool isnum(char a)
+{
+    if (a >= '0' && a <= '9')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+int main()
+{
+    std::string expr("(1+2)+(3+4)+5");
+    std::stack<char> st;
+    int sum = 0;
+    int len = expr.size();
+    for (int i = 0; i < len; i++)
+    {
+        if (expr[i] == '(' || isnum((expr[i])))
+        {
+            st.push(expr[i]);
+        }
+        else if (expr[i] == '+')
+        {
+            continue;
+        }
+        else if (expr[i] == ')')
+        {
+            while (st.top() != '(')
+            {
+                sum += st.top() - '0';
+                st.pop();
+            }
+            st.pop();
+        }
+    }
+    while (!st.empty())
+    {
+        sum += st.top() - '0';
+        st.pop();
+    }
+    std::cout << sum << std::endl;
+    return 0;
+}
+```
+>计算表达式为 (1+2)+(3+4)+5  
+计算结果为 15
+
+---
+
+### 10.3 用accumulate求一个vector< int >中的元素之和。
+答：
+```
+#include<iostream>
+#include<numeric>
+#include<vector>
+
+int main() {
+    std::vector<int> vec = { 1,2,3,4,5 };
+    int sum = std::accumulate(vec.begin(), vec.end(), 0);
+    std::cout << sum << std::endl;
+    return 0;
+}
+```
+
+### 10.15 编写一个lambda，捕获它所在的函数int，并接受一个int参数。lambda应该返回捕获的int和int参数的和。
+答：
+```
+#include<iostream>
+
+int main() {
+    int a = 1;
+    auto f = [a](int b) {return a + b;};
+    std::cout << f(2) << std::endl; 
+    return 0;
+}
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
