@@ -188,6 +188,28 @@ int main() {
 
 ---
 
+### 10.34 使用reverse_iterator逆序打印一个vector。
+答：
+```
+#include <iostream>
+#include <vector>
+
+int main()
+{
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    for (auto it = vec.rbegin(); it != vec.rend(); it++)
+    {
+        std::cout << *it << ' ';
+    }
+    return 0;
+}
+```
+>原vec序列为1,2,3,4,5  
+使用反向迭代器输出为5,4,3,2,1
+
+---
+
+
 
 
 
