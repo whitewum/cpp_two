@@ -498,7 +498,70 @@ Sales_data& Sales_data::operator+= (const Sales_data& s)
 
 ---
 
+### 14.38 编写一个类令其检查某个给定的string对象的长度是否与一个阈值相等，使用该对象编写程序，统计并报告在输入的文件中长度为1的单词有多少个、长度为2的单词有多少个、……、长度为10的单词又有多少个。
+答：
+```
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
 
+class CompareString
+{
+public:
+	CompareString(size_t n) : default_size(n) {};
+	bool operator()(const std::string &s) const
+	{
+		return default_size == s.size();
+	}
+private:
+	size_t default_size;
+};
+
+int main()
+{
+	std::ifstream ifs("letter.txt");
+    if (!ifs) 
+    {
+        return -1;
+    }
+    std::vector<std::string> vs;
+    for(std::string curr; ifs >> curr; vs.push_back(curr));
+    for(int i = 1, n = 0; i < 11; ++i)
+    {
+    	for(auto iter = vs.begin(); iter != vs.end(); )
+    	{
+    		iter = std::find_if(iter+1, vs.end(), CompareString(i));
+    		if(iter != vs.end()) 
+            {
+                ++n;
+            }
+    	}
+    	std::cout << "length:" << i << "," << n << std::endl;
+    	n = 0;
+    }
+	return 0;
+}
+```
+
+---
+
+### 14.52 在下面的加法表达式中分别选用了哪个operator+?列出候选函数、可行函数及为每个可行函数的实参执行的类型转换：
+答：
+```
+struct LongDouble {
+    LongDouble operator+ (const SmallInt&); // 1
+};
+LongDouble operator+(LongDouble&, double);  // 2
+SmallInt si;
+LongDouble ld;
+ld = si + ld;
+ld = ld + si;
+```
+>ld = si + ld;具有二义性，我们可以把si转换成LongDouble，ld转换成SmallInt，然后使用1进行+操作；也可以把si转换成LongDouble，ld转换成double，然后使用2进行+操作。  
+ld = ld + si;正好匹配2 LongDouble operator+(LongDouble&, double);如果使用1的话，需要把si转换成double。
+
+---
 
 
 
