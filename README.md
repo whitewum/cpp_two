@@ -466,7 +466,38 @@ int main()
 ```
 
 ---
-### 14.3 
+### 14.3 string和vector都定义了重载的==以比较各自的对象，假设svec1和svec2是存放string的vector，确定在下面的表达式中分别使用了哪个版本的==？
+答：
+```
+(a) "cobble" == "stone"         // string重载的“==”
+(b) svec1[0] == svec2[0]        // string重载的“==”
+(c) svec1 == svec2              // vector重载的“==”
+(d) "svec1[0] == "stone"        // string重载的“==”
+```
+
+---
+
+### 14.20 为你的Sales_data类定义加法和复合赋值运算符。
+答：
+```
+Sales_data& operator+ (const Sales_data& lhs, const Sales_data& rhs)
+{
+    Sales_data ret(lhs);
+    ret += rhs;
+    return ret;
+}
+```
+```
+Sales_data& Sales_data::operator+= (const Sales_data& s)
+{
+    units_sold += s.units_sold;
+    revenue += s.revenue;
+    return *this;
+}
+```
+
+---
+
 
 
 
