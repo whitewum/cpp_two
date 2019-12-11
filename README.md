@@ -563,16 +563,59 @@ ld = ld + si;正好匹配2 LongDouble operator+(LongDouble&, double);如果使�
 
 ---
 
+### 15.12 有必要讲一个成员函数同时声明成override和final吗？为什么？
+答：没必要，声明成final之后，任何尝试覆盖该函数的操作东都将引发错误，这就导致了override的作用失效。
 
+---
 
+### 15.16 改写你在15.2.2节（第533页）练习中编写的数量首先的折扣策略，令其继承Disc_quote。
+答：
+```
+class Limit_quote : public Disc_quote
+{
+public:
+    Limit_quote() = default;
+    Limit_quote(const std::string& b, double p, std::size_t max, double disc):
+        Disc_quote(b, p, max, disc) { }
+    double net_price(std::size_t n) const override
+	{return x < quantity ? price * x * discount : (x - quantity) * price + quantity * price * discount;}
+};
+```
 
+---
 
+### 15.30 编写你自己的Basket类，用它计算上一个练习中交易记录的总价格。
+答：
+```
+class Basket
+{
+public:
+    void add_item(const std::shared_ptr<Quote> &sale);
+    void add_item(const Quote &q)
+    void add_item(Quote &&q)
+    double total_receipt(std::ostream &os)const;
+};
 
-
-
-
-
-
-
-
-
+double Basket::total_receipt(std::ostream &os)const
+{
+    double sum = 0.0;
+    for (auto iter = items.cbegin(); iter != items.cend(); iter = items.upper_bound(*iter))
+    {
+        sum += print_total(os, **iter, items.count(*iter));
+    }
+    os << "Total Sale: " << sum << std::endl;
+    return sum;
+}
+void add_item(const std::shared_ptr<Quote> &sale)
+{
+    items.insert(sale);
+}
+void add_item(const Quote &q)
+{
+    items.insert(std::shared_ptr<Quote>(q.clone()));
+}
+void add_item(Quote &&q)
+{
+    items.insert(std::shared_ptr<Quote>(std::move(q).clone()));
+}
+```
