@@ -209,7 +209,29 @@ int main()
 
 ---
 
+### 10.42 使用list代替vector重新实现10.2.3节（第343页）中的去除重复单词的程序。
+答：
+```
+#include <iostream>
+#include <list>
+#include <string>
 
+int main()
+{
+    std::list<std::string> words = {"the", "quick", "red", "fox", "jumps", "over", "the", "slow", "red", "turtle"};
+    words.sort();
+    words.unique();
+    for (auto i : words) {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+    return 0;
+}
+```
+
+---
+
+### 11.12 编写程序，读入string和int的序列，将每个string和int存入一个pair中，pair保存在一个vector中。
 
 
 
