@@ -325,7 +325,148 @@ private:
     string name;
 };
 ```
+### 13.46 什么类型的引用可以绑定到下面的初始化器上？
+答：
+```
+int f();
+vector<int> vi(100);
+int? r1 = f();              // f()的返回值相当于一个常量，只能做右值引用或const引用，int &&r = f();
+int? r2 = vi[0];            // 下标运算返回左值，所以应该用int &r = vi[0];
+int? r3 = r1;               // r1此时相当与变量，int &r3 = r1;
+int? r4 = vi[0] * f();       // 算术运算产生右值，int &&r4 = vi[0] * f();
+```
 
+---
+
+### 13.49 为你的StrVec、String和Meggage类添加一个移动构造函数和一个移动赋值运算符。
+答：
+```
+// Str.h文件中加：
+StrVec (StrVec&& rhs) noexcept;
+StrVec& operator= (StrVec&& rhs) noexcept;
+// StrVec.cpp中加：
+StrVec::StrVec(StrVec&& rhs) noexcept : elements (rhs.elements), first_free (rhs.first_free), cap (rhs.cap)
+{
+    rhs.elements = rhs.first_free = rhs.cap = nullptr;
+}
+
+StrVec& StrVec::operator=(StrVec&& rhs) noexcept
+{
+    if (this != &rhs) {
+        free ();
+        elements = rhs.elements;
+        first_free = rhs.first_free;
+        cap = rhs.cap;
+        rhs.elements = rhs.first_free = rhs.cap = nullptr;
+    }
+    return *this;
+}
+```
+```
+//String.h
+String (String&& s) noexcept;
+String& operator= (String&& s) noexcept;
+// String.cpp中加：
+String::String(String&& s) noexcept : begin (s.begin), end (s.end)
+{
+    s.begin = s.end = nullptr;
+}
+
+String& String::operator= (String&& s) noexcept
+{
+    if (this != &s) {
+        free();
+        begin = s.begin;
+        end = s.end;
+        s.begin = s.end = nullptr;
+    }
+    return *this;
+}
+```
+```
+// Message.h
+Message (Message&& m);
+Message& operator= (Message&& m);
+void moveFolders (Message* m);
+// Message.cpp
+void Message::moveFolders (Message* m)
+{
+    folders = std::move(m->folders);
+
+    for (auto f : folders) {
+        f->remMsg(m);
+        f->addMsg(this);
+    }
+    m->folders.clear();
+}
+
+Message::Message (Message&& m) : contents (std::move(m.contents))
+{
+    moveFolders(&m);
+}
+
+Message& Message::operator=(Message&& m)
+{
+    if (this != &m) {
+        remove_from_Folders();
+        contents (std::move(m.contents));
+        moveFolders(&m);
+    }
+    return *this;
+}
+```
+
+---
+
+### 13.58 编写新版本的Foo类，其sorted函数中有打印语句，测试这个类，来验证你对前两题的答案是否正确。
+```
+// .h文件
+class Foo
+{
+public:
+    Foo (std::vector<int>& ivec) : data(ivec) {}
+    Foo sorted() &&;
+    Foo sorted() const &;
+    std::vector<int>& getData() { return data; }
+private:
+    std::vector<int> data;
+};
+
+.cpp文件
+Foo Foo::sorted() &&
+{
+    sort(data.begin(), data.end());
+    cout << "right value sorted." << endl;
+    return *this;
+}
+
+Foo Foo::sorted() const &
+{
+    cout << "left value sorted." << endl;
+    Foo ret (*this);
+//    return ret.sorted();
+    sort (ret.data.begin(), ret.data.end());
+    return ret;
+ //   return Foo(*this).sorted();
+}
+
+int main()
+{
+    vector<int> ivec = {1, 2, 5, 4, 7};
+    Foo f1(ivec);
+    Foo f2 = f1.sorted();
+
+    for (auto i : f2.getData()) {
+        cout << i << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
+```
+
+---
+### 14.3 
 
 
 
