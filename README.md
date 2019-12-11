@@ -232,7 +232,99 @@ int main()
 ---
 
 ### 11.12 编写程序，读入string和int的序列，将每个string和int存入一个pair中，pair保存在一个vector中。
+答：
+```
+#include <iostream>
+#include <string>
+#include <vector>
+#include <utility>
 
+int main()
+{
+    std::vector<std::pair<std::string, int>> vec;
+    std::string word;
+    int i;
+    std::cin >> word >> i;
+    vec.push_back(std::pair<std::string, int>(word, i));
+    std::cout << vec[0].first << ' ' << vec[0].second;
+    return 0;
+}
+```
+
+---
+
+### 11.17 假定C是一个string的multiset，v是一个string的vector，解释下面的调用。指出每个调用是否合法。
+答：
+```
+copy(v.begin(), v.end(), inserter(c, c.end())); 
+// 将v中的元素拷贝到c中。使用合法，可以使用inserter将关联容器当作一个目的位置。
+copy(v.begin(), v.end(), back_inserter(c));
+// 意义同上，但是不合法，因为multiset没有push_back方法，不能调用back_inserter
+copy(c.begin(), c.end(), inserter(v, v.end()));
+// 将c中的元素拷贝到v中，使用合法，vector可以使用inserter。
+copy(c.begin(), c.end(), back_inserter(v));
+// 意义同上，合法，vector有push_back方法，可以使用back_inserter.
+```
+
+---
+
+### 11.38 用unoredered_map重写单词计数程序（参见11.1节，第375页）和单词转换程序（参见11.3.6节，第391页）。
+答：
+```
+#include <iostream>
+#include <string>
+#include <unordered_map>
+
+int main()
+{
+    std::unordered_map<std::string, size_t> word_count;
+    std::string word;
+    while (std::cin >> word) {
+        if (word == "Quit")
+        {
+            break;
+        }
+        ++word_count[word];
+    }
+
+    for (auto i : word_count) {
+        std::cout << i.first << " occurs " << i.second << " times." << std::endl;
+    }
+}
+```
+
+---
+
+### 13.12 在下面的代码片段中会发生几次折构函数调用？
+答：
+```
+bool fcn (const Sales_data *trans, Sales_data accum)
+{
+    Sales_data item1 (*trans), item2 (accum);
+    return item1.isbn() != item2.isbn();
+}
+```
+>两次，退出作用域时，对item1, item2发生折构函数。
+
+---
+
+### 13.18 定义一个Employee类，它包含雇员的姓名和唯一的雇员证号。为这个类定义默认构造函数，以及接受一个表示雇员姓名的string的构造函数。每个构造函数应该通过一个static数据成员来生成一个唯一的证号。
+```
+class Employee
+{
+public:
+    Employee () = default;
+    Employee (const string& n) : name (n)
+    {
+        employee_id = ++increment_number;
+    }
+
+private:
+    static int increment_number;
+    int employee_id;
+    string name;
+};
+```
 
 
 
